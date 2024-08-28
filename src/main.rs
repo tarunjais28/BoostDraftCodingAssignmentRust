@@ -1,47 +1,63 @@
-use std::env;
 use std::collections::VecDeque;
+use std::env;
 
 fn main() {
+    // Collect command line arguments into a vector of strings
     let args = env::args().collect::<Vec<_>>();
+
+    // Provide a default empty string in case no arguments are provided
     let default_input = String::default();
+
+    // Get the first argument if available, otherwise use the default empty string
     let input = args.first().unwrap_or(&default_input);
 
+    // Determine if the input XML string is valid or not
     let result = if determine_xml(input) {
-        "Valid"
+        "Valid" // If valid, return "Valid"
     } else {
-        "Invalid"
+        "Invalid" // If invalid, return "Invalid"
     };
+
+    // Print the result to standard output
     println!("{}", result);
 }
 
+// Function to determine xml tags are valid or not
 fn determine_xml(input: &str) -> bool {
+    // Initialize a stack to keep track of open tags
     let mut stack: VecDeque<String> = VecDeque::new();
-    let mut i = 0;
+    let mut i = 0; // Pointer to iterate through the input string
 
+    // Loop through each character in the input string
     while i < input.len() {
+        // Check if the current character is the start of a tag
         if &input[i..i + 1] == "<" {
-            // Find the closing '>'
+            // Find the closing '>' of the tag
             if let Some(j) = input[i..].find('>') {
-                let tag = &input[i + 1..i + j];
-                if tag.starts_with("/") {
-                    // Closing tag
-                    let tag_name = &tag[1..];
-                    if stack.pop_back() != Some(tag_name.to_string()) {
-                        return false;
+                let tag = &input[i + 1..i + j]; // Extract the tag name
+
+                // Check if it's a closing tag (starts with '/')
+                if let Some(stripped_tag) = tag.strip_prefix("/") {
+                    // Pop the last open tag from the stack and compare it with the closing tag
+                    if stack.pop_back() != Some(stripped_tag.to_string()) {
+                        return false; // If they don't match, the XML is invalid
                     }
                 } else {
-                    // Opening tag
+                    // If it's an opening tag, push it onto the stack
                     stack.push_back(tag.to_string());
                 }
+
+                // Move the pointer past the current tag
                 i += j + 1;
             } else {
-                return false;
+                return false; // If no closing '>' is found, the XML is invalid
             }
         } else {
-            i += 1;
+            i += 1; // Move to the next character if it's not a tag
         }
     }
 
+    // The XML is valid only if the stack is empty at the end (all tags are closed properly)
     stack.is_empty()
 }
 
@@ -51,9 +67,8 @@ mod tests {
 
     use crate::determine_xml;
 
-    // You can use here to test, feel free to modify/add the test cases here.
-    // You can run tests with `cargo test`.
-    // You can also use other ways to test if you want.
+    // Unit tests for the determine_xml function
+    // Each test case checks a different XML string and its expected validity
 
     #[test_case("<Design><Code>hello world</Code></Design>", true ; "normal case")]
     #[test_case("<Design><Code>hello world</Code></Design><People>", false ; "no closing tag")]
