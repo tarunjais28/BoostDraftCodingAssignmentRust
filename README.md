@@ -22,6 +22,14 @@ This pull request introduces an XML validation feature to the project. The code 
 
 ## Usage Instructions
 
+### Runing the Release Version:
+To run the release version of the application, use the following command:
+
+```bash
+cargo run --release
+```
+This will compile the application with optimizations enabled, producing an optimized binary in the target/release directory.
+
 ### Running the Application
 To run the application and validate an XML string, use the following command:
 
@@ -32,9 +40,9 @@ cargo run -- "<your_xml_string_here>"
 - Replace `"<your_xml_string_here>"` with your actual XML string.
 - Example:
 
-  ```bash
-  cargo run -- "<Design><Code>hello world</Code></Design>"
-  ```
+```bash
+cargo run -- "<Design><Code>hello world</Code></Design>"
+```
 
 ### Running the Tests
 To ensure the validity of the XML validation logic, run the unit tests using:
